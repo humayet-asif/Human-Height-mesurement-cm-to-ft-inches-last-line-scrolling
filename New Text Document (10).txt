@@ -1,0 +1,92 @@
+#include <Wire.h>                      
+#include <LiquidCrystal_I2C.h>       
+#define max_distance 200
+
+String text = "Supervised by S.M. Abdur Rahim ";  // Text to be scrolled
+int textLength = text.length();  // Get the length of the text
+int textPosition = 0; 
+
+LiquidCrystal_I2C lcd(0x3F,20,4);
+const int trigPin = 8;
+const int echoPin = 7;
+long duration;
+int distance;     
+int cm;
+void setup()
+
+{
+
+  lcd.init();  
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  Serial.begin(9600);                  
+  lcd.backlight();   
+  // Print a message to the LCD.
+
+  lcd.begin(20, 4);
+
+  
+}
+
+
+void loop()
+{
+lcd.clear();
+digitalWrite(trigPin, LOW);
+delayMicroseconds(2);
+digitalWrite(trigPin, HIGH);
+delayMicroseconds(10);
+digitalWrite(trigPin, LOW);
+duration = pulseIn(echoPin, HIGH);
+distance = duration * 0.0340 / 2;
+cm= 180 - distance ;
+
+
+
+int feet = cm/30.48;
+double inch = cm/2.54;
+int c = round(inch - (feet * 12));
+
+lcd.setCursor(0, 0);
+lcd.print("Your Height: ");
+lcd.print(cm);
+lcd.print(" ");
+lcd.print("cm");
+
+lcd.setCursor(0, 1);
+lcd.print("OR: ");
+lcd.print(feet);
+lcd.print("'");
+lcd.print(" ");
+lcd.print("feet");
+lcd.print(" ");
+lcd.print(c);
+lcd.print("''");
+lcd.print(" ");
+lcd.print("inch");
+
+
+
+
+
+  
+             
+lcd.setCursor(0,2);
+lcd.print("IoT Club, EEE");
+
+//lcd.setCursor(0,3);
+//lcd.print("SM Abdur Rahim");
+
+lcd.setCursor(0, 3);  // Set the cursor to the first column of the last row
+lcd.print(text.substring(textPosition, textPosition + 20));  // Print the next 20 characters of the text
+
+  textPosition++;  // Increment the text position
+  if (textPosition >= textLength) {  // If the text has scrolled completely, reset the position
+    textPosition = 0;
+  }
+
+
+delay(1000);
+
+}
+
